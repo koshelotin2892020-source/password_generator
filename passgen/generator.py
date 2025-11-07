@@ -1,4 +1,4 @@
-import random
+import random as rnd
 import string
 from .utils import validate_length
 
@@ -33,18 +33,27 @@ class PasswordGenerator:
 
             # Проверяем, что есть хотя бы один набор символов
             if not characters:
-                raise ValueError("Должен быть выбран хотя бы один тип символов")
+                raise ValueError("Должен быть выбран хотя бы 1 тип символов")
 
             # Генерируем пароль
-            password = ''.join(random.choice(characters) for _ in range(length))
+            password = ''.join(rnd.choice(characters) for _ in range(length))
 
             # Проверяем, что пароль содержит выбранные типы символов
-            if use_uppercase and not any(c in self.char_sets['uppercase'] for c in password):
-                password = self._ensure_character_type(password, self.char_sets['uppercase'])
-            if use_digits and not any(c in self.char_sets['digits'] for c in password):
-                password = self._ensure_character_type(password, self.char_sets['digits'])
-            if use_special and not any(c in self.char_sets['special'] for c in password):
-                password = self._ensure_character_type(password, self.char_sets['special'])
+            if use_uppercase and not any(c in self.char_sets['uppercase']
+                                         for c in password):
+                password = self._ensure_character_type(
+                    password, self.char_sets['uppercase']
+                    )
+            if use_digits and not any(c in self.char_sets['digits']
+                                      for c in password):
+                password = self._ensure_character_type(
+                    password, self.char_sets['digits']
+                    )
+            if use_special and not any(c in self.char_sets['special']
+                                       for c in password):
+                password = self._ensure_character_type(
+                    password, self.char_sets['special']
+                    )
 
             return password
 
@@ -58,6 +67,6 @@ class PasswordGenerator:
         """
         password_list = list(password)
         # Заменяем случайный символ на символ из нужного набора
-        index = random.randint(0, len(password_list) - 1)
-        password_list[index] = random.choice(char_set)
+        index = rnd.randint(0, len(password_list) - 1)
+        password_list[index] = rnd.choice(char_set)
         return ''.join(password_list)
