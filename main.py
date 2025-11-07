@@ -27,12 +27,12 @@ def main():
     generate_parser = subparsers.add_parser('generate', help='Генерация нового пароля')
     generate_parser.add_argument('--length', type=int, default=12, 
                                help='Длина пароля (по умолчанию: 12)')
-    generate_parser.add_argument('--no-uppercase', dest='uppercase', action='store_false',
-                               help='Не использовать заглавные буквы')
-    generate_parser.add_argument('--no-digits', dest='digits', action='store_false',
-                               help='Не использовать цифры')
-    generate_parser.add_argument('--no-special', dest='special', action='store_false',
-                               help='Не использовать специальные символы')
+    generate_parser.add_argument('--uppercase', action='store_true', default=True,
+                               help='Использовать заглавные буквы (по умолчанию: True)')
+    generate_parser.add_argument('--digits', action='store_true', default=True,
+                               help='Использовать цифры (по умолчанию: True)')
+    generate_parser.add_argument('--special', action='store_true', default=True,
+                               help='Использовать специальные символы (по умолчанию: True)')
     generate_parser.add_argument('--save', action='store_true',
                                help='Сохранить пароль в файл')
     generate_parser.add_argument('--service', type=str,
@@ -41,9 +41,6 @@ def main():
                                help='Имя пользователя для сохранения')
     generate_parser.add_argument('--description', type=str, default='',
                                help='Описание для сохранения')
-
-    # Устанавливаем значения по умолчанию
-    generate_parser.set_defaults(uppercase=True, digits=True, special=True)
 
     # Парсер для команды find
     find_parser = subparsers.add_parser('find', help='Поиск сохраненных паролей')
