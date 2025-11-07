@@ -24,7 +24,8 @@ def handle_generate(args):
             username = args.username or "unknown_user"
             description = args.description or ""
 
-            record_id = storage.save_password(service, username, password, description)
+            record_id = storage.save_password(service, username,
+                                              password, description)
             print(f"Пароль сохранен с ID: {record_id}")
 
     except Exception as e:
