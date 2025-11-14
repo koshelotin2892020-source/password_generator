@@ -1,6 +1,6 @@
 import json
 import os
-from .utils import hash_password, verify_password
+from .utils import hash_password
 
 
 class PasswordStorage:

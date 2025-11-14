@@ -29,20 +29,3 @@ def hash_password(password):
         return f"{salt}${base64.b64encode(hashed).decode('utf-8')}"
     except Exception as e:
         raise Exception(f"Ошибка при хэшировании пароля: {str(e)}")
-
-
-def verify_password(password, hashed_password):
-    """
-    Проверка пароля против хэша
-    """
-    try:
-        salt, stored_hash = hashed_password.split('$')
-        new_hash = hashlib.pbkdf2_hmac(
-            'sha256',
-            password.encode('utf-8'),
-            salt.encode('utf-8'),
-            100000
-        )
-        return base64.b64encode(new_hash).decode('utf-8') == stored_hash
-    except Exception as e:
-        raise False
