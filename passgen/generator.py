@@ -4,7 +4,15 @@ from .utils import validate_length
 
 
 class PasswordGenerator:
+    """
+    Генератор безопасных паролей.
+
+    Attributes:
+        char_sets (dict): Словарь с наборами символов для паролей
+    """
+
     def __init__(self):
+        """Инициализация генератора паролей."""
         self.char_sets = {
             'lowercase': string.ascii_lowercase,
             'uppercase': string.ascii_uppercase,
@@ -12,10 +20,28 @@ class PasswordGenerator:
             'special': '!@#$%^&*()_+-=[]{}|;:,.<>?'
         }
 
-    def generate_password(self, length=12, use_uppercase=True, use_digits=True,
-                          use_special=True):
+    def generate_password(self, length=12, use_uppercase=True, use_digits=True, use_special=True):
         """
-        Генерация пароля с заданными параметрами
+        Генерация пароля с заданными параметрами.
+
+        Args:
+            length (int): Длина пароля (по умолчанию 12)
+            use_uppercase (bool): Использовать заглавные буквы (по умолчанию True)
+            use_digits (bool): Использовать цифры (по умолчанию True)
+            use_special (bool): Использовать специальные символы (по умолчанию True)
+
+        Returns:
+            str: Сгенерированный пароль
+
+        Raises:
+            ValueError: Если не выбран ни один тип символов
+            Exception: При ошибках генерации
+
+        Example:
+            >>> generator = PasswordGenerator()
+            >>> password = generator.generate_password(length=16, use_special=True)
+            >>> len(password)
+            16
         """
         try:
             validate_length(length)
@@ -39,6 +65,7 @@ class PasswordGenerator:
             password = ''.join(rnd.choice(characters) for _ in range(length))
 
             # Проверяем, что пароль содержит выбранные типы символов
+            # (функция проверки надежности пароля)
             if use_uppercase and not any(c in self.char_sets['uppercase']
                                          for c in password):
                 password = self._ensure_character_type(

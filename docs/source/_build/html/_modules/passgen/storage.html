@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>passgen.storage &mdash; документация Password Generator 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=9ca2116e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Password Generator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Содержание:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Использование</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Модули</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Password Generator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">passgen.storage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код passgen.storage</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">hash_password</span><span class="p">,</span> <span class="n">verify_password</span>
+
+
+<div class="viewcode-block" id="PasswordStorage">
+<a class="viewcode-back" href="../../modules.html#passgen.PasswordStorage">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PasswordStorage</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;passwords.json&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_storage_file</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_storage_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Создает файл хранилища, если он не существует</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({},</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ошибка при создании файла хранилища: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PasswordStorage.save_password">
+<a class="viewcode-back" href="../../modules.html#passgen.PasswordStorage.save_password">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Сохранение пароля в файл (в хэшированном виде)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Читаем существующие данные</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="c1"># Хэшируем пароль</span>
+            <span class="n">hashed_password</span> <span class="o">=</span> <span class="n">hash_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+
+            <span class="c1"># Сохраняем запись</span>
+            <span class="n">record_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">service</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">record_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;service&#39;</span><span class="p">:</span> <span class="n">service</span><span class="p">,</span>
+                <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+                <span class="s1">&#39;password_hash&#39;</span><span class="p">:</span> <span class="n">hashed_password</span><span class="p">,</span>
+                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description</span>
+            <span class="p">}</span>
+
+            <span class="c1"># Записываем обратно</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">record_id</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ошибка при сохранении пароля: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PasswordStorage.find_password">
+<a class="viewcode-back" href="../../modules.html#passgen.PasswordStorage.find_password">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Поиск паролей по сервису и/или имени пользователя</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">record_id</span><span class="p">,</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">matches_service</span> <span class="o">=</span> <span class="n">service</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">service</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;service&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">matches_username</span> <span class="o">=</span> <span class="n">username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">matches_service</span> <span class="ow">and</span> <span class="n">matches_username</span><span class="p">:</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s1">&#39;service&#39;</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;service&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+                    <span class="p">})</span>
+
+            <span class="k">return</span> <span class="n">results</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ошибка при поиске паролей: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PasswordStorage.list_all">
+<a class="viewcode-back" href="../../modules.html#passgen.PasswordStorage.list_all">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Получение списка всех сохраненных паролей (без самих паролей)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;service&#39;</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;service&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ошибка при получении списка паролей: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024, Александр. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

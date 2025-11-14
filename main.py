@@ -15,6 +15,8 @@ def main():
         epilog="""
 Примеры использования:
   python main.py generate --length 16 --special --digits --uppercase
+  python main.py generate --length 12 --no-digits --no-special
+  python main.py generate --length 8 --no-uppercase --no-digits --no-special
   python main.py generate --length 12 --save --service gmail --username user@example.com
   python main.py find --service gmail
   python main.py list
@@ -25,14 +27,17 @@ def main():
 
     # Парсер для команды generate
     generate_parser = subparsers.add_parser('generate', help='Генерация нового пароля')
-    generate_parser.add_argument('--length', type=int, default=12, 
+    generate_parser.add_argument('--length', type=int, default=12,
                                help='Длина пароля (по умолчанию: 12)')
-    generate_parser.add_argument('--uppercase', action='store_true', default=True,
-                               help='Использовать заглавные буквы (по умолчанию: True)')
-    generate_parser.add_argument('--digits', action='store_true', default=True,
-                               help='Использовать цифры (по умолчанию: True)')
-    generate_parser.add_argument('--special', action='store_true', default=True,
-                               help='Использовать специальные символы (по умолчанию: True)')
+
+    # Флаги для включения/отключения типов символов
+    generate_parser.add_argument('--no-uppercase', dest='uppercase', action='store_false',
+                               help='Не использовать заглавные буквы')
+    generate_parser.add_argument('--no-digits', dest='digits', action='store_false',
+                               help='Не использовать цифры')
+    generate_parser.add_argument('--no-special', dest='special', action='store_false',
+                               help='Не использовать специальные символы')
+
     generate_parser.add_argument('--save', action='store_true',
                                help='Сохранить пароль в файл')
     generate_parser.add_argument('--service', type=str,
@@ -41,6 +46,9 @@ def main():
                                help='Имя пользователя для сохранения')
     generate_parser.add_argument('--description', type=str, default='',
                                help='Описание для сохранения')
+
+    # Устанавливаем значения по умолчанию
+    generate_parser.set_defaults(uppercase=True, digits=True, special=True)
 
     # Парсер для команды find
     find_parser = subparsers.add_parser('find', help='Поиск сохраненных паролей')
