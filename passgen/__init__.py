@@ -10,7 +10,7 @@
 
 from .generator import PasswordGenerator
 from .storage import PasswordStorage
-from .utils import validate_length, hash_password, verify_password
+from .utils import validate_length, hash_password
 from .commands import handle_generate, handle_find, handle_list
 
 __version__ = '1.0.0'
@@ -20,7 +20,6 @@ __all__ = [
     'PasswordStorage',
     'validate_length',
     'hash_password',
-    'verify_password',
     'handle_generate',
     'handle_find',
     'handle_list'
