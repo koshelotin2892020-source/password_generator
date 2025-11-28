@@ -1,28 +1,17 @@
-Документация Password Generator
-===============================
+.. Password Generator documentation master file, created by
+   sphinx-quickstart on Fri Nov 28 14:09:45 2025.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Password Generator documentation
+================================
+
+Add your content using ``reStructuredText`` syntax. See the
+`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
+documentation for details.
+
 
 .. toctree::
    :maxdepth: 2
-   :caption: Содержание:
+   :caption: Contents:
 
-   usage
-   modules
-
-Введение
---------
-
-Password Generator - это утилита командной строки для генерации и безопасного хранения паролей.
-
-Основные возможности:
-
-- Генерация безопасных паролей с настраиваемыми параметрами
-- Безопасное хранение паролей с использованием хэширования/шифрования
-- Поиск и управление сохраненными паролями
-- Удобный интерфейс командной строки
-
-Индексы и таблицы
-=================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
