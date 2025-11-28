@@ -10,16 +10,16 @@ import base64
 
 def validate_length(length):
     """Проверяет корректность длины пароля.
-    
+
     Args:
         length (int): Длина пароля для проверки.
-        
+
     Returns:
         bool: True если длина корректна.
-        
+
     Raises:
         ValueError: Если длина меньше 4 или больше 100.
-        
+
     Example:
         >>> validate_length(12)
         True
@@ -35,23 +35,20 @@ def validate_length(length):
 
 def hash_password(password):
     """Хэширует пароль с использованием PBKDF2 и соли.
-    
+
     Args:
         password (str): Пароль для хэширования.
-        
+
     Returns:
-        str: Хэшированный пароль в формате "соль$хэш".
-        
+        str: Хэшированный пароль в формате "salt$hash".
+
     Raises:
         Exception: При ошибках хэширования.
-        
-    Example:
-        >>> hashed = hash_password("my_password")
-        >>> isinstance(hashed, str)
-        True
     """
     try:
-        salt = base64.b64encode(bytes(str(hash(password)), 'utf-8')[:16]).decode('utf-8')
+        salt = base64.b64encode(bytes(str(hash(password)),
+                                      'utf-8'
+                                      )[:16]).decode('utf-8')
         hashed = hashlib.pbkdf2_hmac(
             'sha256',
             password.encode('utf-8'),
@@ -65,14 +62,14 @@ def hash_password(password):
 
 def verify_password(password, hashed_password):
     """Проверяет пароль против хэша.
-    
+
     Args:
         password (str): Пароль для проверки.
         hashed_password (str): Хэшированный пароль для сравнения.
-        
+
     Returns:
         bool: True если пароль верный, иначе False.
-        
+
     Example:
         >>> hashed = hash_password("test")
         >>> verify_password("test", hashed)

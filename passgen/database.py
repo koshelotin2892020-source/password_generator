@@ -13,13 +13,13 @@ load_dotenv()
 
 def get_db_connection():
     """Создает подключение к PostgreSQL и гарантирует существование таблицы.
-    
+
     Returns:
         psycopg2.connection: Объект подключения к базе данных.
-        
+
     Raises:
         Exception: При ошибках подключения к БД.
-        
+
     Example:
         >>> conn = get_db_connection()
         >>> conn.closed
@@ -33,7 +33,7 @@ def get_db_connection():
             user=os.getenv('DB_USER', 'postgres'),
             password=os.getenv('DB_PASSWORD', '')
         )
-        
+
         # Создаем таблицу если не существует
         cur = conn.cursor()
         cur.execute("""
@@ -48,7 +48,7 @@ def get_db_connection():
         """)
         conn.commit()
         cur.close()
-        
+
         return conn
     except Exception as e:
         raise Exception(f"Ошибка подключения к базе данных: {str(e)}")
