@@ -1,72 +1,91 @@
 #!/usr/bin/env python3
 """
-Генератор безопасных паролей CLI
+Генератор безопасных паролей с PostgreSQL.
+
+Утилита командной строки для генерации, хранения и управления паролями.
 """
 
 import argparse
 import sys
-from passgen.commands import handle_generate, handle_find, handle_list
+from passgen.commands import (
+    handle_generate, 
+    handle_find, 
+    handle_list, 
+    handle_verify, 
+    handle_delete
+)
 
 
 def main():
+    """Основная функция для обработки команд CLI."""
     parser = argparse.ArgumentParser(
-        description='Генератор безопасных паролей',
+        description='🔐 Генератор безопасных паролей с PostgreSQL',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Примеры использования:
   python main.py generate --length 16 --special --digits --uppercase
-  python main.py generate --length 12 --no-digits --no-special
-  python main.py generate --length 8 --no-uppercase --no-digits --no-special
   python main.py generate --length 12 --save --service gmail --username user@example.com
   python main.py find --service gmail
   python main.py list
+  python main.py verify --service gmail --username user@example.com --password "my_password"
+  python main.py delete --service gmail --username user@example.com
         """
     )
-
+    
     subparsers = parser.add_subparsers(dest='command', help='Доступные команды')
-
-    # Парсер для команды generate
-    generate_parser = subparsers.add_parser('generate', help='Генерация нового пароля')
-    generate_parser.add_argument('--length', type=int, default=12,
+    
+    # Команда generate
+    generate_parser = subparsers.add_parser('generate', help='Сгенерировать новый пароль')
+    generate_parser.add_argument('--length', type=int, default=12, 
                                help='Длина пароля (по умолчанию: 12)')
-
-    # Флаги для включения/отключения типов символов
     generate_parser.add_argument('--no-uppercase', dest='uppercase', action='store_false',
                                help='Не использовать заглавные буквы')
     generate_parser.add_argument('--no-digits', dest='digits', action='store_false',
                                help='Не использовать цифры')
     generate_parser.add_argument('--no-special', dest='special', action='store_false',
                                help='Не использовать специальные символы')
-
     generate_parser.add_argument('--save', action='store_true',
-                               help='Сохранить пароль в файл')
+                               help='Сохранить пароль в базу данных')
     generate_parser.add_argument('--service', type=str,
                                help='Название сервиса для сохранения')
     generate_parser.add_argument('--username', type=str,
                                help='Имя пользователя для сохранения')
     generate_parser.add_argument('--description', type=str, default='',
                                help='Описание для сохранения')
-
-    # Устанавливаем значения по умолчанию
     generate_parser.set_defaults(uppercase=True, digits=True, special=True)
-
-    # Парсер для команды find
-    find_parser = subparsers.add_parser('find', help='Поиск сохраненных паролей')
+    
+    # Команда find
+    find_parser = subparsers.add_parser('find', help='Найти сохраненные пароли')
     find_parser.add_argument('--service', type=str,
                            help='Фильтр по названию сервиса')
     find_parser.add_argument('--username', type=str,
                            help='Фильтр по имени пользователя')
-
-    # Парсер для команды list
-    list_parser = subparsers.add_parser('list', help='Показать все сохраненные пароли')
-
-    # Обработка аргументов
+    
+    # Команда list
+    subparsers.add_parser('list', help='Показать все сохраненные пароли')
+    
+    # Команда verify
+    verify_parser = subparsers.add_parser('verify', help='Проверить пароль')
+    verify_parser.add_argument('--service', type=str, required=True,
+                             help='Название сервиса')
+    verify_parser.add_argument('--username', type=str, required=True,
+                             help='Имя пользователя')
+    verify_parser.add_argument('--password', type=str, required=True,
+                             help='Пароль для проверки')
+    
+    # Команда delete
+    delete_parser = subparsers.add_parser('delete', help='Удалить пароль')
+    delete_parser.add_argument('--service', type=str, required=True,
+                             help='Название сервиса')
+    delete_parser.add_argument('--username', type=str, required=True,
+                             help='Имя пользователя')
+    
     args = parser.parse_args()
-
+    
     if not args.command:
         parser.print_help()
         sys.exit(1)
-
+    
     try:
         if args.command == 'generate':
             handle_generate(args)
@@ -74,14 +93,16 @@ def main():
             handle_find(args)
         elif args.command == 'list':
             handle_list(args)
-        else:
-            parser.print_help()
-
+        elif args.command == 'verify':
+            handle_verify(args)
+        elif args.command == 'delete':
+            handle_delete(args)
+            
     except KeyboardInterrupt:
-        print("\nПрограмма прервана пользователем")
+        print("\n⏹️  Программа прервана пользователем")
         sys.exit(1)
     except Exception as e:
-        print(f"Критическая ошибка: {str(e)}")
+        print(f"💥 Критическая ошибка: {e}")
         sys.exit(1)
 
 

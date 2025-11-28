@@ -3,24 +3,31 @@
 
 Модули:
     generator - Генерация паролей
-    storage - Хранение паролей
+    storage - Работа с базой данных
     utils - Вспомогательные функции
     commands - Обработчики команд CLI
 """
 
 from .generator import PasswordGenerator
 from .storage import PasswordStorage
-from .utils import validate_length, hash_password
-from .commands import handle_generate, handle_find, handle_list
+from .utils import hash_password, verify_password, validate_length
+from .commands import (
+    handle_generate,
+    handle_find,
+    handle_list,
+    handle_verify,
+    handle_delete
+)
 
-__version__ = '1.0.0'
-__author__ = 'Александр'
 __all__ = [
     'PasswordGenerator',
     'PasswordStorage',
-    'validate_length',
     'hash_password',
+    'verify_password',
+    'validate_length',
     'handle_generate',
     'handle_find',
-    'handle_list'
+    'handle_list',
+    'handle_verify',
+    'handle_delete'
 ]

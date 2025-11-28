@@ -1,31 +1,93 @@
+"""
+Вспомогательные функции для работы с паролями.
+
+Содержит функции для хэширования, проверки паролей и валидации.
+"""
+
 import hashlib
 import base64
 
 
 def validate_length(length):
+    """Проверяет корректность длины пароля.
+    
+    Args:
+        length (int): Длина пароля для проверки.
+        
+    Returns:
+        bool: True если длина корректна.
+        
+    Raises:
+        ValueError: Если длина меньше 4 или больше 100.
+        
+    Example:
+        >>> validate_length(12)
+        True
+        >>> validate_length(3)
+        ValueError: Длина пароля должна быть не менее 4 символов
     """
-    Проверка корректности длины пароля
-    """
-    if not isinstance(length, int) or length < 4:
-        raise ValueError("Длина пароля должна быть целым числом не менее 4")
+    if length < 4:
+        raise ValueError("Длина пароля должна быть не менее 4 символов")
     if length > 100:
         raise ValueError("Длина пароля не должна превышать 100 символов")
     return True
 
 
 def hash_password(password):
-    """
-    Хэширование пароля для безопасного хранения
+    """Хэширует пароль с использованием PBKDF2 и соли.
+    
+    Args:
+        password (str): Пароль для хэширования.
+        
+    Returns:
+        str: Хэшированный пароль в формате "соль$хэш".
+        
+    Raises:
+        Exception: При ошибках хэширования.
+        
+    Example:
+        >>> hashed = hash_password("my_password")
+        >>> isinstance(hashed, str)
+        True
     """
     try:
-        # Создаем соль и хэшируем пароль
         salt = base64.b64encode(bytes(str(hash(password)), 'utf-8')[:16]).decode('utf-8')
         hashed = hashlib.pbkdf2_hmac(
             'sha256',
             password.encode('utf-8'),
             salt.encode('utf-8'),
-            100000  # Количество итераций
+            100000
         )
         return f"{salt}${base64.b64encode(hashed).decode('utf-8')}"
     except Exception as e:
         raise Exception(f"Ошибка при хэшировании пароля: {str(e)}")
+
+
+def verify_password(password, hashed_password):
+    """Проверяет пароль против хэша.
+    
+    Args:
+        password (str): Пароль для проверки.
+        hashed_password (str): Хэшированный пароль для сравнения.
+        
+    Returns:
+        bool: True если пароль верный, иначе False.
+        
+    Example:
+        >>> hashed = hash_password("test")
+        >>> verify_password("test", hashed)
+        True
+        >>> verify_password("wrong", hashed)
+        False
+    """
+    try:
+        salt, stored_hash = hashed_password.split('$')
+        new_hash = hashlib.pbkdf2_hmac(
+            'sha256',
+            password.encode('utf-8'),
+            salt.encode('utf-8'),
+            100000
+        )
+        return base64.b64encode(new_hash).decode('utf-8') == stored_hash
+    except Exception:
+        return False
