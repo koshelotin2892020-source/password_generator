@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -46,4 +45,10 @@ napoleon_include_special_with_doc = True
 language = 'ru'
 
 # Автоматическое документирование всех членов классов
-autodoc_default_flags = ['members', 'undoc-members', 'private-members', 'special-members', 'inherited-members', 'show-inheritance']
+autodoc_default_flags = ['members',
+                         'undoc-members',
+                         'private-members',
+                         'special-members',
+                         'inherited-members',
+                         'show-inheritance'
+                         ]
