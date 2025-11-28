@@ -34,7 +34,6 @@ class PasswordStorage:
         try:
             hashed_password = hash_password(password)
 
-            # Пытаемся вставить новую запись
             cur.execute("""
                 INSERT INTO passwords
                 (service, username, password_hash, description)
@@ -47,116 +46,12 @@ class PasswordStorage:
             return record_id
 
         except psycopg2.IntegrityError:
-            # Запись уже существует - обновляем существующую
             conn.rollback()
-            return self._update_password(service,
-                                         username,
-                                         password,
-                                         description
-                                         )
+            raise Exception(f'''Запись для {service}/{username} уже существует.
+                            Используйте delete.''')
         except Exception as e:
             conn.rollback()
-            raise Exception(f"Ошибка при сохранении пароля: {str(e)}")
-        finally:
-            cur.close()
-            conn.close()
-
-    def _update_password(self, service, username, password, description=""):
-        """Обновляет существующий пароль.
-
-        Args:
-            service (str): Название сервиса.
-            username (str): Имя пользователя.
-            password (str): Новый пароль.
-            description (str): Новое описание.
-
-        Returns:
-            int: ID обновленной записи.
-        """
-        conn = get_db_connection()
-        cur = conn.cursor()
-
-        try:
-            hashed_password = hash_password(password)
-
-            cur.execute("""
-                UPDATE passwords
-                SET password_hash = %s, description = %s
-                WHERE service = %s AND username = %s
-                RETURNING id
-            """, (hashed_password, description, service, username))
-
-            result = cur.fetchone()
-            conn.commit()
-
-            if result:
-                return result[0]
-            else:
-                raise Exception("Запись не найдена для обновления")
-
-        except Exception as e:
-            conn.rollback()
-            raise Exception(f"Ошибка при обновлении пароля: {str(e)}")
-        finally:
-            cur.close()
-            conn.close()
-
-    def save_or_update_password(self,
-                                service,
-                                username,
-                                password,
-                                description=""
-                                ):
-        """Сохраняет или обновляет пароль с явным указанием действия.
-
-        Args:
-            service (str): Название сервиса.
-            username (str): Имя пользователя.
-            password (str): Пароль.
-            description (str): Описание.
-
-        Returns:
-            tuple: (action, record_id) где action: 'created' или 'updated'
-        """
-        conn = get_db_connection()
-        cur = conn.cursor()
-
-        try:
-            # Сначала проверяем существует ли запись
-            cur.execute("""
-                SELECT id FROM passwords
-                WHERE service = %s AND username = %s
-            """, (service, username))
-
-            existing_record = cur.fetchone()
-            hashed_password = hash_password(password)
-
-            if existing_record:
-                # Обновляем существующую запись
-                cur.execute("""
-                    UPDATE passwords
-                    SET password_hash = %s, description = %s
-                    WHERE service = %s AND username = %s
-                    RETURNING id
-                """, (hashed_password, description, service, username))
-                action = 'updated'
-            else:
-                # Создаем новую запись
-                cur.execute("""
-                    INSERT INTO passwords
-                    (service, username, password_hash, description)
-                    VALUES (%s, %s, %s, %s)
-                    RETURNING id
-                """, (service, username, hashed_password, description))
-                action = 'created'
-
-            record_id = cur.fetchone()[0]
-            conn.commit()
-            return action, record_id
-
-        except Exception as e:
-            conn.rollback()
-            raise Exception(f"Ошибка при сохранении пароля: {str(e)}")
+            raise Exception(f"Ошибка при сохранении: {str(e)}")
         finally:
             cur.close()
             conn.close()

@@ -13,12 +13,12 @@ config.ini
 *.sqlite
 passwords.json  # старый JSON файл
 
-# Логи
-*.log
-logs/
-
 # Питон
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Документация
+docs/build/
+docs/_build/

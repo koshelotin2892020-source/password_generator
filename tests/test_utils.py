@@ -53,13 +53,24 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(len(parts[1]) > 0)  # хэш
 
     def test_hash_password_different_results(self):
-        """Тестирует что одинаковые пароли дают разные хэши."""
+        """Тестирует что одинаковые пароли дают разные хэши из-за соли."""
         password = "same_password"
         hashed1 = hash_password(password)
         hashed2 = hash_password(password)
 
-        # Из-за использования соли хэши должны быть разными
-        self.assertNotEqual(hashed1, hashed2)
+        # Из-за использования случайной соли хэши должны быть разными
+        self.assertNotEqual(hashed1,
+                            hashed2,
+                            "Хэши должны быть разными из-за разной соли"
+                            )
+
+        # Но оба хэша должны верифицироваться с оригинальным паролем
+        self.assertTrue(verify_password(password, hashed1))
+        self.assertTrue(verify_password(password, hashed2))
+
+        # И не верифицироваться с неправильным паролем
+        self.assertFalse(verify_password("wrong_password", hashed1))
+        self.assertFalse(verify_password("wrong_password", hashed2))
 
     def test_verify_password_correct(self):
         """Тестирует проверку правильного пароля."""

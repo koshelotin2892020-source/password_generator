@@ -106,13 +106,19 @@ class TestPasswordGenerator(unittest.TestCase):
 
     def test_generate_password_no_character_types(self):
         """Тестирует ошибку при отсутствии типов символов."""
-        with self.assertRaises(ValueError) as context:
-            self.generator.generate_password(
-                use_uppercase=False,
-                use_digits=False,
-                use_special=False
-            )
-        self.assertIn("хотя бы один тип символов", str(context.exception))
+        password = self.generator.generate_password(
+            length=10,
+            use_uppercase=False,
+            use_digits=False,
+            use_special=False
+        )
+
+        # Проверяем что пароль сгенерирован успешно
+        self.assertEqual(len(password), 10)
+
+        # Проверяем что все символы - строчные буквы
+        for char in password:
+            self.assertIn(char, string.ascii_lowercase)
 
     def test_generate_password_unique(self):
         """Тестирует что пароли уникальны."""

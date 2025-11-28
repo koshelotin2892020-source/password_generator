@@ -1,8 +1,25 @@
 #!/usr/bin/env python3
 """
-Генератор безопасных паролей с PostgreSQL.
+Главный модуль CLI для генератора паролей.
 
-Утилита командной строки для генерации, хранения и управления паролями.
+Этот модуль предоставляет интерфейс командной строки для управления паролями.
+Использует argparse для обработки аргументов и делегирует выполнение 
+в модуль commands.
+
+Примеры использования:
+    python main.py generate --length 16
+    python main.py generate --save --service gmail --username user@example.com
+    python main.py find --service gmail
+    python main.py list
+    python main.py verify --service gmail --username user --password "pass123"
+    python main.py delete --service gmail --username user
+
+Доступные команды:
+    generate  - Генерация нового пароля
+    find      - Поиск сохраненных паролей
+    list      - Показать все пароли
+    verify    - Проверить пароль
+    delete    - Удалить пароль
 """
 
 import argparse
@@ -17,7 +34,14 @@ from passgen.commands import (
 
 
 def main():
-    """Основная функция для обработки команд CLI."""
+    """Основная функция для обработки команд CLI.
+
+    Настраивает парсер аргументов и вызывает соответствующие обработчики
+    из модуля commands.
+
+    Raises:
+        SystemExit: При завершении программы или ошибках.
+    """
     parser = argparse.ArgumentParser(
         description='Генератор безопасных паролей с PostgreSQL',
         formatter_class=argparse.RawDescriptionHelpFormatter,

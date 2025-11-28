@@ -31,7 +31,7 @@ def handle_generate(args):
             use_special=args.special
         )
 
-        print(f"Сгенерированный пароль: {password}")
+        print(f"Сгенерирован пароль: {password}")
 
         if args.save:
             storage = PasswordStorage()
@@ -73,7 +73,7 @@ def handle_find(args):
         results = storage.find_passwords(args.service, args.username)
 
         if not results:
-            print("📭 Пароли не найдены")
+            print("Пароли не найдены")
             return
 
         print(f"Найдено записей: {len(results)}")

@@ -80,7 +80,7 @@ class TestCommands(unittest.TestCase):
             "test_password_123",
             "test description"
         )
-        mock_print.assert_any_call("✅ Пароль сохранен в базу данных (ID: 1)")
+        mock_print.assert_any_call("Пароль сохранен в базу данных (ID: 1)")
 
     @patch('passgen.commands.PasswordStorage')
     @patch('passgen.commands.print')
@@ -104,7 +104,7 @@ class TestCommands(unittest.TestCase):
         handle_find(self.mock_args)
 
         # Проверяем вывод
-        mock_print.assert_any_call("📋 Найдено записей: 1")
+        mock_print.assert_any_call("Найдено записей: 1")
         mock_print.assert_any_call("1. Сервис: gmail")
         mock_print.assert_any_call("   Пользователь: user1")
         mock_print.assert_any_call("   Описание: test description")
@@ -121,7 +121,7 @@ class TestCommands(unittest.TestCase):
         handle_find(self.mock_args)
 
         # Проверяем вывод
-        mock_print.assert_called_with("📭 Пароли не найдены")
+        mock_print.assert_called_with("Пароли не найдены")
 
     @patch('passgen.commands.handle_find')
     def test_handle_list(self, mock_handle_find):
@@ -149,7 +149,7 @@ class TestCommands(unittest.TestCase):
         handle_verify(self.mock_args)
 
         # Проверяем вывод
-        mock_print.assert_called_with("✅ Пароль верный")
+        mock_print.assert_called_with("Пароль верный")
 
     @patch('passgen.commands.PasswordStorage')
     @patch('passgen.commands.print')
@@ -168,7 +168,7 @@ class TestCommands(unittest.TestCase):
         handle_verify(self.mock_args)
 
         # Проверяем вывод
-        mock_print.assert_called_with("❌Пароль неверный или запись не найдена")
+        mock_print.assert_called_with("Пароль неверный или запись не найдена")
 
     @patch('passgen.commands.PasswordStorage')
     @patch('passgen.commands.print')
@@ -186,7 +186,7 @@ class TestCommands(unittest.TestCase):
         handle_delete(self.mock_args)
 
         # Проверяем вывод
-        mock_print.assert_called_with("✅ Пароль для gmail/user1 удален")
+        mock_print.assert_called_with("Пароль для gmail/user1 удален")
 
     @patch('passgen.commands.PasswordStorage')
     @patch('passgen.commands.print')
@@ -204,7 +204,7 @@ class TestCommands(unittest.TestCase):
         handle_delete(self.mock_args)
 
         # Проверяем вывод
-        mock_print.assert_called_with("❌ Пароль для gmail/user1 не найден")
+        mock_print.assert_called_with("Пароль для gmail/user1 не найден")
 
 
 if __name__ == '__main__':

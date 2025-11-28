@@ -6,6 +6,7 @@
 
 import hashlib
 import base64
+import os
 
 
 def validate_length(length):
@@ -34,7 +35,7 @@ def validate_length(length):
 
 
 def hash_password(password):
-    """Хэширует пароль с использованием PBKDF2 и соли.
+    """Хэширует пароль с использованием PBKDF2 и salt.
 
     Args:
         password (str): Пароль для хэширования.
@@ -46,9 +47,9 @@ def hash_password(password):
         Exception: При ошибках хэширования.
     """
     try:
-        salt = base64.b64encode(bytes(str(hash(password)),
-                                      'utf-8'
-                                      )[:16]).decode('utf-8')
+        # Генерируем случайную соль
+        salt = base64.b64encode(os.urandom(16)).decode('utf-8')
+
         hashed = hashlib.pbkdf2_hmac(
             'sha256',
             password.encode('utf-8'),
