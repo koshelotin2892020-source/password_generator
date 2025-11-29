@@ -61,7 +61,7 @@ def hash_password(password):
         raise Exception(f"Ошибка при хэшировании пароля: {str(e)}")
 
 
-def verify_password(password, hashed_password):
+def verify_password(password, hash_passw):
     """Проверяет пароль против хэша.
 
     Args:
@@ -78,8 +78,23 @@ def verify_password(password, hashed_password):
         >>> verify_password("wrong", hashed)
         False
     """
+    # Проверяем базовые условия перед split
+    if (not hash_passw or not isinstance(hash_passw,
+                                         str) or '$' not in hash_passw):
+        return False
     try:
-        salt, stored_hash = hashed_password.split('$')
+        parts = hash_passw.split('$')
+
+        # Проверяем что есть обе части (соль и хэш)
+        if len(parts) != 2:
+            return False
+
+        salt, stored_hash = parts
+
+        # Проверяем что обе части не пустые
+        if not salt or not stored_hash:
+            return False
+
         new_hash = hashlib.pbkdf2_hmac(
             'sha256',
             password.encode('utf-8'),
@@ -87,5 +102,5 @@ def verify_password(password, hashed_password):
             100000
         )
         return base64.b64encode(new_hash).decode('utf-8') == stored_hash
-    except Exception:
+    except (ValueError, TypeError, UnicodeDecodeError):
         return False

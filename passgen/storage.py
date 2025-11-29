@@ -5,7 +5,6 @@
 """
 
 import psycopg2
-# from psycopg2 import IntegrityError
 from .database import get_db_connection
 from .utils import hash_password, verify_password
 
